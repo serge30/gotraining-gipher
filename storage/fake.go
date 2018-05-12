@@ -5,49 +5,46 @@ type FakeStorage struct {
 	CurrentID int
 }
 
-func (s *FakeStorage) GetItems() ([]*Gif, error) {
-	result := make([]*Gif, len(s.Gifs))
+func (s *FakeStorage) GetItems() ([]Gif, error) {
+	result := make([]Gif, len(s.Gifs))
 
 	i := 0
 	for _, item := range s.Gifs {
-		record := &Gif{}
-		*record = item
-		result[i] = record
+		result[i] = item
 		i++
 	}
 
 	return result, nil
 }
 
-func (s *FakeStorage) GetItem(id int) (*Gif, error) {
+func (s *FakeStorage) GetItem(id int) (Gif, error) {
 	result, ok := s.Gifs[id]
 
 	if ok {
-		return &result, nil
+		return result, nil
 	}
-	return nil, NotFoundError(id)
+	return Gif{}, NotFoundError(id)
 }
 
-func (s *FakeStorage) CreateItem(item *Gif) (*Gif, error) {
-	record := *item
-	record.ID = s.CurrentID
+func (s *FakeStorage) CreateItem(item Gif) (Gif, error) {
+	item.ID = s.CurrentID
 
-	if err := record.Validate(); err != nil {
-		return nil, err
+	if err := item.Validate(); err != nil {
+		return Gif{}, err
 	}
 
-	s.Gifs[record.ID] = record
+	s.Gifs[item.ID] = item
 
 	s.CurrentID++
 
-	return &record, nil
+	return item, nil
 }
 
-func (s *FakeStorage) UpdateItem(id int, item *Gif) (*Gif, error) {
+func (s *FakeStorage) UpdateItem(id int, item Gif) (Gif, error) {
 	record, ok := s.Gifs[id]
 
 	if !ok {
-		return nil, NotFoundError(id)
+		return Gif{}, NotFoundError(id)
 	}
 
 	if item.Name != "" {
@@ -67,12 +64,12 @@ func (s *FakeStorage) UpdateItem(id int, item *Gif) (*Gif, error) {
 	}
 
 	if err := record.Validate(); err != nil {
-		return nil, err
+		return Gif{}, err
 	}
 
 	s.Gifs[id] = record
 
-	return &record, nil
+	return record, nil
 }
 
 func (s *FakeStorage) DeleteItem(id int) error {
