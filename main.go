@@ -1,16 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 
+	"github.com/serge30/gotraining-gipher/api/web"
 	"github.com/serge30/gotraining-gipher/storage"
 )
 
 func main() {
-	store, _ := storage.NewFakeStorage()
-	items, _ := store.GetItems()
+	store, err := storage.NewFakeStorage()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	for _, gif := range items {
-		fmt.Println(gif)
+	router := web.GetRouters(store)
+
+	log.Println("Listening on the port 8081")
+	err = http.ListenAndServe(":8081", router)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

@@ -7,11 +7,11 @@ import (
 type NotFoundError int
 
 func (e NotFoundError) Error() string {
-	return fmt.Sprintf("Id %d is not found", e)
+	return fmt.Sprintf("Id %d is not found", int(e))
 }
 
 type ValidationError string
 
 func (e ValidationError) Error() string {
-	return fmt.Sprintf("Field '%s' is malformed or missing", e)
+	return fmt.Sprintf("Field '%s' is malformed or missing", string(e))
 }
