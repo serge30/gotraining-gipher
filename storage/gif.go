@@ -13,10 +13,6 @@ type Gif struct {
 }
 
 func (r *Gif) Validate() error {
-	if r.ID <= 0 {
-		return ValidationError("id")
-	}
-
 	if r.Name == "" {
 		return ValidationError("name")
 	}

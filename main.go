@@ -9,14 +9,15 @@ import (
 )
 
 func main() {
-	store, err := storage.NewFakeStorage()
+	store, err := storage.NewSqliteStorage("gifs.db")
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer store.Close()
 
 	router := web.GetRouters(store)
 
-	log.Println("Listening on the port 8081")
+	log.Println("Listening on the port 8081...")
 	err = http.ListenAndServe(":8081", router)
 	if err != nil {
 		log.Fatalln(err)

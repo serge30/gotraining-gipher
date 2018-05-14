@@ -1,6 +1,8 @@
 package storage
 
 type Storage interface {
+	Close() error
+
 	GetItems() ([]Gif, error)
 
 	GetItem(id int) (Gif, error)

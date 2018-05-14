@@ -5,6 +5,10 @@ type FakeStorage struct {
 	CurrentID int
 }
 
+func (s *FakeStorage) Close() error {
+	return nil
+}
+
 func (s *FakeStorage) GetItems() ([]Gif, error) {
 	result := make([]Gif, len(s.Gifs))
 
