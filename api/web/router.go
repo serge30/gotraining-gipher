@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 
 	"github.com/serge30/gotraining-gipher/storage"
@@ -21,6 +22,11 @@ func GetRouters(storage storage.Storage) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+	// A good base middleware stack
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	r.Route("/gifs", func(r chi.Router) {
 		r.Get("/", gr.ListGifs)

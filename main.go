@@ -20,6 +20,6 @@ func main() {
 	log.Println("Listening on the port 8081...")
 	err = http.ListenAndServe(":8081", router)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 }
