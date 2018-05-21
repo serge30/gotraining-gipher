@@ -133,5 +133,5 @@ func (gr *GifRouter) DeleteGif(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.Status(r, 204)
+	render.NoContent(w, r)
 }
