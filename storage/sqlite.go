@@ -45,8 +45,8 @@ func (s *SqliteStorage) CreateItem(item Gif) (Gif, error) {
 func (s *SqliteStorage) UpdateItem(id int, item Gif) (Gif, error) {
 	var record Gif
 
-	if err := s.Db.First(&record, id).Error; err != nil {
-		return Gif{}, err
+	if s.Db.First(&record, id).RecordNotFound() {
+		return Gif{}, NotFoundError(id)
 	}
 
 	if item.Name != "" {
@@ -69,7 +69,7 @@ func (s *SqliteStorage) UpdateItem(id int, item Gif) (Gif, error) {
 		return Gif{}, err
 	}
 
-	if err := s.Db.Update(&record).Error; err != nil {
+	if err := s.Db.Save(&record).Error; err != nil {
 		return Gif{}, err
 	}
 
@@ -79,7 +79,18 @@ func (s *SqliteStorage) UpdateItem(id int, item Gif) (Gif, error) {
 func (s *SqliteStorage) DeleteItem(id int) error {
 	item := Gif{ID: id}
 
-	return s.Db.Delete(&item).Error
+	result := s.Db.Delete(&item)
+	rowsAffected, err := result.RowsAffected, result.Error
+
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return NotFoundError(id)
+	}
+
+	return nil
 }
 
 func NewSqliteStorage(dbFileName string) (Storage, error) {
