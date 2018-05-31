@@ -11,6 +11,12 @@ import (
 	"github.com/serge30/gotraining-gipher/storage"
 )
 
+// gifContextKeyType is separate type for context key.
+type gifContextKeyType string
+
+// gifContextKey is context key to store Gif loaded in GifCtx middleware.
+const gifContextKey gifContextKeyType = "Gif"
+
 // GifRouter is a context structure for routers.
 type GifRouter struct {
 	storage storage.Storage
@@ -67,7 +73,7 @@ func (gr *GifRouter) GifCtx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "gif", gif)
+		ctx := context.WithValue(r.Context(), gifContextKey, gif)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -88,7 +94,7 @@ func (gr *GifRouter) ListGifs(w http.ResponseWriter, r *http.Request) {
 
 // GetGif is router handler to return particular Gif.
 func (gr *GifRouter) GetGif(w http.ResponseWriter, r *http.Request) {
-	gif := r.Context().Value("gif").(storage.Gif)
+	gif := r.Context().Value(gifContextKey).(storage.Gif)
 
 	if err := render.Render(w, r, &GifResponse{gif}); err != nil {
 		render.Render(w, r, ErrRender(err))
@@ -118,7 +124,7 @@ func (gr *GifRouter) CreateGif(w http.ResponseWriter, r *http.Request) {
 
 // UpdateGif is router handler to update particular Gif.
 func (gr *GifRouter) UpdateGif(w http.ResponseWriter, r *http.Request) {
-	gif := r.Context().Value("gif").(storage.Gif)
+	gif := r.Context().Value(gifContextKey).(storage.Gif)
 	gifID := gif.ID
 
 	data := &GifRequest{}
@@ -140,7 +146,7 @@ func (gr *GifRouter) UpdateGif(w http.ResponseWriter, r *http.Request) {
 
 // DeleteGif is router handler to delete particular Gif.
 func (gr *GifRouter) DeleteGif(w http.ResponseWriter, r *http.Request) {
-	gif := r.Context().Value("gif").(storage.Gif)
+	gif := r.Context().Value(gifContextKey).(storage.Gif)
 
 	err := gr.storage.DeleteItem(gif.ID)
 	if err != nil {
