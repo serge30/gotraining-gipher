@@ -8,6 +8,7 @@ import (
 	"github.com/serge30/gotraining-gipher/storage"
 )
 
+// ErrResponse renderer type for handling all sorts of errors.
 type ErrResponse struct {
 	Err            error `json:"-"` // low-level runtime error
 	HTTPStatusCode int   `json:"-"` // http response status code
@@ -16,11 +17,13 @@ type ErrResponse struct {
 	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
 }
 
+// Render mrthod to render ErrResponse type and set correct HTTP response code.
 func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
 }
 
+// ErrInvalidRequest creates new error response for error "400 Invalid request".
 func ErrInvalidRequest(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
@@ -30,6 +33,7 @@ func ErrInvalidRequest(err error) render.Renderer {
 	}
 }
 
+// ErrRender creates new error response for error "422 Error rendering response".
 func ErrRender(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
@@ -39,8 +43,10 @@ func ErrRender(err error) render.Renderer {
 	}
 }
 
+// ErrNotFound is standard error response for "404 Resource not found".
 var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, StatusText: "Resource not found."}
 
+// ConverStorageError converts storage package errors to renderer.
 func ConverStorageError(err error) render.Renderer {
 	switch err.(type) {
 	case storage.NotFoundError:

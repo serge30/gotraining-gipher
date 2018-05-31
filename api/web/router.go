@@ -11,10 +11,19 @@ import (
 	"github.com/serge30/gotraining-gipher/storage"
 )
 
+// GifRouter is a context structure for routers.
 type GifRouter struct {
 	storage storage.Storage
 }
 
+// GetRouters returns http.Handler to handle REST requests
+// for Gifs management:
+//
+// 		GET /gifs - list of Gifs
+// 		POST /gifs - create new Gif
+// 		GET /gifs/{id} - return one Gif
+// 		PUT /gifs/{id} - update Gif
+// 		DELETE /gifs/{id} - delete Gif
 func GetRouters(storage storage.Storage) http.Handler {
 	gr := GifRouter{storage}
 
@@ -37,6 +46,7 @@ func GetRouters(storage storage.Storage) http.Handler {
 	return r
 }
 
+// GifCtx is middleware to add context.
 func (gr *GifRouter) GifCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var gif storage.Gif
@@ -62,6 +72,7 @@ func (gr *GifRouter) GifCtx(next http.Handler) http.Handler {
 	})
 }
 
+// ListGifs is router handler to return list of Gifs.
 func (gr *GifRouter) ListGifs(w http.ResponseWriter, r *http.Request) {
 	gifs, err := gr.storage.GetItems()
 	if err != nil {
@@ -75,6 +86,7 @@ func (gr *GifRouter) ListGifs(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetGif is router handler to return particular Gif.
 func (gr *GifRouter) GetGif(w http.ResponseWriter, r *http.Request) {
 	gif := r.Context().Value("gif").(storage.Gif)
 
@@ -84,6 +96,7 @@ func (gr *GifRouter) GetGif(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateGif is router handler to create new Gif.
 func (gr *GifRouter) CreateGif(w http.ResponseWriter, r *http.Request) {
 	data := &GifRequest{}
 	if err := render.Bind(r, data); err != nil {
@@ -103,6 +116,7 @@ func (gr *GifRouter) CreateGif(w http.ResponseWriter, r *http.Request) {
 	render.Render(w, r, &GifResponse{newGif})
 }
 
+// UpdateGif is router handler to update particular Gif.
 func (gr *GifRouter) UpdateGif(w http.ResponseWriter, r *http.Request) {
 	gif := r.Context().Value("gif").(storage.Gif)
 	gifID := gif.ID
@@ -124,6 +138,7 @@ func (gr *GifRouter) UpdateGif(w http.ResponseWriter, r *http.Request) {
 	render.Render(w, r, &GifResponse{newGif})
 }
 
+// DeleteGif is router handler to delete particular Gif.
 func (gr *GifRouter) DeleteGif(w http.ResponseWriter, r *http.Request) {
 	gif := r.Context().Value("gif").(storage.Gif)
 
