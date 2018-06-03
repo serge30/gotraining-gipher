@@ -1,14 +1,18 @@
 package storage
 
+// FakeStorage is Storage interface compatible structure for
+// testing purposes.
 type FakeStorage struct {
 	Gifs      map[int]Gif
 	CurrentID int
 }
 
+// Close method closes conection. For FakeStorage does nothing.
 func (s *FakeStorage) Close() error {
 	return nil
 }
 
+// GetItems returns all gifs in the storage.
 func (s *FakeStorage) GetItems() ([]Gif, error) {
 	result := make([]Gif, len(s.Gifs))
 
@@ -21,6 +25,7 @@ func (s *FakeStorage) GetItems() ([]Gif, error) {
 	return result, nil
 }
 
+// GetItem returns particular gif from the storage.
 func (s *FakeStorage) GetItem(id int) (Gif, error) {
 	result, ok := s.Gifs[id]
 
@@ -30,6 +35,7 @@ func (s *FakeStorage) GetItem(id int) (Gif, error) {
 	return Gif{}, NotFoundError(id)
 }
 
+// CreateItem adds new gif to the storage if it passes validation.
 func (s *FakeStorage) CreateItem(item Gif) (Gif, error) {
 	item.ID = s.CurrentID
 
@@ -44,6 +50,7 @@ func (s *FakeStorage) CreateItem(item Gif) (Gif, error) {
 	return item, nil
 }
 
+// UpdateItem updates existing gif in the storage if it passes validation.
 func (s *FakeStorage) UpdateItem(id int, item Gif) (Gif, error) {
 	record, ok := s.Gifs[id]
 
@@ -62,6 +69,7 @@ func (s *FakeStorage) UpdateItem(id int, item Gif) (Gif, error) {
 	return record, nil
 }
 
+// DeleteItem removes specified item from the storage.
 func (s *FakeStorage) DeleteItem(id int) error {
 	if _, ok := s.Gifs[id]; !ok {
 		return NotFoundError(id)
@@ -71,6 +79,8 @@ func (s *FakeStorage) DeleteItem(id int) error {
 	return nil
 }
 
+// NewFakeStorage creates a new storage object with populated gifs.
+// For testing purposes.
 func NewFakeStorage() (Storage, error) {
 	return &FakeStorage{
 		Gifs: map[int]Gif{

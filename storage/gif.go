@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Gif is a structure holds gif's info.
 type Gif struct {
 	ID     int    `json:"id"`
 	Name   string `json:"name"`
@@ -12,6 +13,11 @@ type Gif struct {
 	Height int    `json:"height"`
 }
 
+// Validate is a method to validate gif
+//
+// Rules are next: Name and Slug are not empty, Width and Height
+// are greater than zero. In case of validation fail, ValidationError
+// is returned.
 func (r *Gif) Validate() error {
 	if r.Name == "" {
 		return ValidationError("name")
@@ -32,6 +38,8 @@ func (r *Gif) Validate() error {
 	return nil
 }
 
+// Update is a method which updates gif's fields using
+// provided item. It copies all non-empty fields except of ID.
 func (r *Gif) Update(item Gif) {
 	if item.Name != "" {
 		r.Name = item.Name

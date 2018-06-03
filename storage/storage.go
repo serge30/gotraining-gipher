@@ -1,5 +1,6 @@
 package storage
 
+// Storage is an interface to manage storage.
 type Storage interface {
 	Close() error
 
