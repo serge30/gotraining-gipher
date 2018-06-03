@@ -18,6 +18,15 @@ func TestGif(t *testing.T) {
 			})
 		})
 
+		Convey("When Update methos is run", func() {
+			updateGif := Gif{ID: 3, Name: "Gif3", Slug: "gif-3", Width: 1300, Height: 1200}
+			gif.Update(updateGif)
+
+			Convey("All fields except Id should be updated", func() {
+				So(gif, ShouldResemble, Gif{ID: 1, Name: "Gif3", Slug: "gif-3", Width: 1300, Height: 1200})
+			})
+		})
+
 		Convey("When String method is run", func() {
 			str := gif.String()
 

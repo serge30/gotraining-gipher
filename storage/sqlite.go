@@ -49,21 +49,7 @@ func (s *SqliteStorage) UpdateItem(id int, item Gif) (Gif, error) {
 		return Gif{}, NotFoundError(id)
 	}
 
-	if item.Name != "" {
-		record.Name = item.Name
-	}
-
-	if item.Slug != "" {
-		record.Slug = item.Slug
-	}
-
-	if item.Width != 0 {
-		record.Width = item.Width
-	}
-
-	if item.Height != 0 {
-		record.Height = item.Height
-	}
+	record.Update(item)
 
 	if err := record.Validate(); err != nil {
 		return Gif{}, err
