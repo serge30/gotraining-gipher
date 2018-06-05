@@ -36,6 +36,25 @@ func TestGetRoutersList(t *testing.T) {
 		assert.Contains(t, resp.Body.String(), "Gif1")
 	}
 }
+// go tool pprof -pdf web.test.exe cpu.out > cpu.pdf
+func BenchmarkGetRoutersGet(b *testing.B) {
+	req, err := http.NewRequest("GET", "/gifs", nil)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	store, err := storage.NewFakeStorage()
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	handler := GetRouters(store)
+	for i := 0; i < b.N; i++ {
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+	}
+}
+
 func TestGetRoutersGet(t *testing.T) {
 	resp, _, err := getResponse("GET", "/gifs/1", nil)
 	if assert.NoError(t, err) {
